@@ -1,11 +1,10 @@
 package fr.abes.baconprovider.service;
 
+import fr.abes.baconprovider.entity.Provider;
 import jakarta.persistence.Column;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 
 @Service
@@ -43,5 +42,18 @@ public class FileService {
         FileWriter toWrite = new FileWriter(file, true);
         toWrite.write(line + System.lineSeparator());
         toWrite.close();
+    }
+
+    public boolean checkFileCSVForProviders(File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String headers = reader.readLine();
+        if(headers == null)
+            return false;
+        for (Field field : Provider.class.getDeclaredFields()) {
+            Column column = field.getAnnotation(Column.class);
+            if(!headers.contains(column.name()))
+                return false;
+        }
+        return file.getName().endsWith(".csv");
     }
 }

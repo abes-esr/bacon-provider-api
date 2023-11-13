@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -19,6 +21,9 @@ class FileServiceTest {
     FileService service;
 
     File file;
+
+    @Value("classpath:test2.csv")
+    private File file2;
 
     @BeforeEach
     void init() throws IOException {
@@ -67,5 +72,12 @@ class FileServiceTest {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName\"", reader.readLine());
         Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName2\"", reader.readLine());
+    }
+
+    @Test
+    void checkFileCSVForProviders() throws IOException, IllegalAccessException {
+
+        Assertions.assertTrue(service.checkFileCSVForProviders(file2));
+
     }
 }

@@ -9,10 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -53,5 +50,12 @@ public class BaconProviderController {
                 .headers(headers)
                 .contentLength(resource.contentLength())
                 .body(resource);
+    }
+
+    @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
+    public ResponseEntity<String> postProviders() throws IOException, IllegalAccessException {
+
+
+        return ResponseEntity.ok("oui");
     }
 }
