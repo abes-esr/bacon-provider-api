@@ -77,7 +77,7 @@ class BaconProviderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(result1 -> Assertions.assertTrue(result1.getResponse().getContentType().equals("application/force-download")))
                 .andExpect(result1 -> Assertions.assertTrue(result1.getResponse().getContentLength() > 0))
-                .andExpect(result -> Assertions.assertEquals(resultStr, result.getResponse().getContentAsString()));
+                .andExpect(result -> Assertions.assertEquals(resultStr, result.getResponse().getContentAsString(StandardCharsets.UTF_8)));
 
     }
 }
