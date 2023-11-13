@@ -47,7 +47,7 @@ class FileServiceTest {
         service.writeLine(file, provider);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Assertions.assertEquals("1,provider,nom,prenom,mail,displayName", reader.readLine());
+        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName\"", reader.readLine());
     }
 
     @Test
@@ -61,10 +61,11 @@ class FileServiceTest {
         provider.setPrenomContact("prenom");
 
         service.writeLine(file, provider);
+        provider.setDisplayName("displayName2");
         service.writeLine(file, provider);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Assertions.assertEquals("1,provider,nom,prenom,mail,displayName", reader.readLine());
-        Assertions.assertEquals("1,provider,nom,prenom,mail,displayName", reader.readLine());
+        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName\"", reader.readLine());
+        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName2\"", reader.readLine());
     }
 }

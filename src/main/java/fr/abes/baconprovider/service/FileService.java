@@ -31,7 +31,10 @@ public class FileService {
         int i = 0;
         for (Field field : objet.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            line.append(field.get(objet));
+            if (field.getName().equals("displayName"))
+                line.append("\"").append(field.get(objet)).append("\"");
+            else
+                line.append(field.get(objet));
             field.setAccessible(false);
             if (i != objet.getClass().getDeclaredFields().length - 1)
                 line.append(",");

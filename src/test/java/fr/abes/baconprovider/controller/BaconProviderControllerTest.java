@@ -65,17 +65,16 @@ class BaconProviderControllerTest {
         provider2.setMailContact("mail2");
         provider2.setPrenomContact("prénom2");
 
-        StringBuilder resultStr = new StringBuilder("IDT_PROVIDER,PROVIDER,NOM_CONTACT,PRENOM_CONTACT,MAIL_CONTACT,DISPLAY_NAME");
-        resultStr.append(System.lineSeparator());
-        resultStr.append("1,provider1,nom1,prénom1,mail1,displayName1");
-        resultStr.append(System.lineSeparator());
-        resultStr.append("2,provider2,nom2,prénom2,mail2,displayName2");
-        resultStr.append(System.lineSeparator());
+        String resultStr = "IDT_PROVIDER,PROVIDER,NOM_CONTACT,PRENOM_CONTACT,MAIL_CONTACT,DISPLAY_NAME" + System.lineSeparator() +
+                "1,provider1,nom1,prénom1,mail1,\"displayName1\"" +
+                System.lineSeparator() +
+                "2,provider2,nom2,prénom2,mail2,\"displayName2\"" +
+                System.lineSeparator();
 
         Mockito.when(service.getProviders()).thenReturn(Lists.newArrayList(provider1, provider2));
         this.mockMvc.perform(get("/api/v1/providers").characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk())
-                .andExpect(result1 -> Assertions.assertTrue(result1.getResponse().getContentType().equals("application/force-download")))
+                .andExpect(result1 -> Assertions.assertEquals("application/force-download", result1.getResponse().getContentType()))
                 .andExpect(result1 -> Assertions.assertTrue(result1.getResponse().getContentLength() > 0))
                 .andExpect(result -> Assertions.assertEquals(resultStr, result.getResponse().getContentAsString(StandardCharsets.UTF_8)));
 
