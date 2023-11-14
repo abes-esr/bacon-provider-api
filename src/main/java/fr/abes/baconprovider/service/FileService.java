@@ -1,16 +1,18 @@
 package fr.abes.baconprovider.service;
 
-import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.configuration.Constants;
+import fr.abes.baconprovider.exception.FileException;
 import jakarta.persistence.Column;
+import jakarta.persistence.Table;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @Service
 public class FileService {
-
+    private final String SEPARATOR = ";";
     public void writeHeaders(File file, Class clazz) throws IOException {
         StringBuilder line = new StringBuilder();
         int i = 0;
@@ -45,20 +47,29 @@ public class FileService {
         toWrite.close();
     }
 
-    public boolean checkFileCSVForProviders(File file) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String headers = reader.readLine();
-        if(headers == null)
-            return false;
-        for (Field field : Provider.class.getDeclaredFields()) {
-            Column column = field.getAnnotation(Column.class);
-            if(!headers.contains(column.name()))
-                return false;
+    public void checkCsvFile(File file, Class clazz) throws FileException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            if (!file.getName().endsWith(".csv"))
+                throw new FileException(Constants.FILE_EXCEPTION_WRONG_EXTENSION);
+
+            String headers = reader.readLine();
+            if (headers == null) {
+                throw new FileException(Constants.FILE_EXCEPTION_MISSING_HEADER);
+            }
+            int nbColumnObject = clazz.getDeclaredFields().length;
+            for (Field field : clazz.getDeclaredFields()) {
+                Column column = field.getAnnotation(Column.class);
+                if (Arrays.stream(headers.split(SEPARATOR)).noneMatch(header -> header.equals(column.name()))) {
+                    throw new FileException(String.format(Constants.FILE_EXCEPTION_MISSING_COLUMN, column.name()));
+                }
+            }
+
+            if (!reader.lines().filter(line -> line.split(SEPARATOR).length != nbColumnObject).toList().isEmpty()) {
+                throw new FileException(Constants.FILE_EXCEPTION_WRONG_NB_COLUMN + ((Table) clazz.getAnnotation(Table.class)).name());
+            }
+        } catch (IOException ex) {
+            throw new FileException(Constants.FILE_EXCEPTION_ERROR_READ);
         }
 
-        boolean haveSixColumns = reader.lines().filter(line -> line.split(",").length != 6).collect(Collectors.joining()).length() == 0;
-
-
-        return file.getName().endsWith(".csv") && haveSixColumns;
     }
 }

@@ -18,4 +18,8 @@ public class ProviderService {
         return dao.findAll();
     }
 
+    public void saveListProvider(List<Provider> providers) {
+
+    }
+
 }

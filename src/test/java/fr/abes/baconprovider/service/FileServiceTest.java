@@ -1,19 +1,17 @@
 package fr.abes.baconprovider.service;
 
+import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.exception.FileException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {FileService.class})
 class FileServiceTest {
@@ -22,8 +20,17 @@ class FileServiceTest {
 
     File file;
 
-    @Value("classpath:test2.csv")
-    private File file2;
+    @Value("classpath:checkFileOk.csv")
+    private File fileOk;
+
+    @Value("classpath:checkFileWrongExtension.txt")
+    private File fileWrongExtension;
+
+    @Value("classpath:checkFileWrongHeader.csv")
+    private File fileWrongHeader;
+
+    @Value("classpath:checkFileWrongColumnNumber.csv")
+    private File checkFileWrongColumnNumber;
 
     @BeforeEach
     void init() throws IOException {
@@ -75,9 +82,20 @@ class FileServiceTest {
     }
 
     @Test
-    void checkFileCSVForProviders() throws IOException, IllegalAccessException {
+    void checkFileCSVForProviders() throws FileException {
+        service.checkCsvFile(fileOk, Provider.class);
 
-        Assertions.assertTrue(service.checkFileCSVForProviders(file2));
+        FileException exception = Assertions.assertThrows(FileException.class, () -> service.checkCsvFile(fileWrongExtension, Provider.class));
+        Assertions.assertEquals(Constants.FILE_EXCEPTION_WRONG_EXTENSION, exception.getMessage());
 
+        exception = Assertions.assertThrows(FileException.class, () -> service.checkCsvFile(fileWrongHeader, Provider.class));
+        Assertions.assertEquals(String.format(Constants.FILE_EXCEPTION_MISSING_COLUMN, "PROVIDER"), exception.getMessage());
+
+        exception = Assertions.assertThrows(FileException.class, () -> service.checkCsvFile(checkFileWrongColumnNumber, Provider.class));
+        Assertions.assertEquals(Constants.FILE_EXCEPTION_WRONG_NB_COLUMN + "PROVIDER", exception.getMessage());
+
+        File nonExistingFile = new File("");
+        exception = Assertions.assertThrows(FileException.class, () -> service.checkCsvFile(nonExistingFile, Provider.class));
+        Assertions.assertEquals(Constants.FILE_EXCEPTION_ERROR_READ, exception.getMessage());
     }
 }

@@ -1,6 +1,7 @@
 package fr.abes.baconprovider.controller;
 
 import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.exception.FileException;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
 import org.springframework.core.io.ByteArrayResource;
@@ -10,11 +11,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -53,9 +56,15 @@ public class BaconProviderController {
     }
 
     @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
-    public ResponseEntity<String> postProviders() throws IOException, IllegalAccessException {
+    public void postProviders(MultipartFile file) throws IOException, FileException {
+        //vérification du fichier
+        fileService.checkCsvFile(file.getResource().getFile(), Provider.class);
+        List<Provider> listeProvider = new ArrayList<>();
+
+        BufferedReader reader = new BufferedReader(new FileReader(file.getResource().getFile()));
 
 
-        return ResponseEntity.ok("oui");
+        //providerService.saveListProvider();
+        reader.close();
     }
 }
