@@ -1,11 +1,13 @@
 package fr.abes.baconprovider.controller;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.FileException;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
+import fr.abes.baconprovider.utils.UtilsMapper;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,7 +19,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,9 +29,12 @@ public class BaconProviderController {
 
     private final FileService fileService;
 
-    public BaconProviderController(ProviderService providerService, FileService fileService) {
+    private final UtilsMapper mapper;
+
+    public BaconProviderController(ProviderService providerService, FileService fileService, UtilsMapper mapper) {
         this.providerService = providerService;
         this.fileService = fileService;
+        this.mapper = mapper;
     }
 
     @GetMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
@@ -56,15 +60,23 @@ public class BaconProviderController {
     }
 
     @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
-    public void postProviders(MultipartFile file) throws IOException, FileException {
+    public void postProviders(MultipartFile file) throws IOException, FileException, CsvException {
+        File tmpFile = new File("provider.csv");
+        file.transferTo(tmpFile);
+
         //vérification du fichier
-        fileService.checkCsvFile(file.getResource().getFile(), Provider.class);
-        List<Provider> listeProvider = new ArrayList<>();
+        fileService.checkCsvFile(tmpFile, Provider.class);
 
-        BufferedReader reader = new BufferedReader(new FileReader(file.getResource().getFile()));
+        CSVReader reader = new CSVReader(new FileReader(tmpFile));
+        List<Provider> listeProvider = mapper.mapList(reader.readAll(),Provider.class);
 
-
-        //providerService.saveListProvider();
+        providerService.saveListProvider(listeProvider);
         reader.close();
+    }
+
+    private File createTmpFileFromMultipart(MultipartFile file) throws IOException {
+        File tmpFile = new File("providers.csv");
+
+        return tmpFile;
     }
 }
