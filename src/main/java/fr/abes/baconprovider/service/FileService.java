@@ -20,7 +20,7 @@ public class FileService {
             Column column = field.getAnnotation(Column.class);
             line.append(column.name());
             if (i != clazz.getDeclaredFields().length - 1)
-                line.append(",");
+                line.append(SEPARATOR);
             i++;
         }
         FileWriter toWrite = new FileWriter(file);
@@ -33,13 +33,15 @@ public class FileService {
         int i = 0;
         for (Field field : objet.getClass().getDeclaredFields()) {
             field.setAccessible(true);
-            if (field.getName().equals("displayName"))
-                line.append("\"").append(field.get(objet)).append("\"");
-            else
-                line.append(field.get(objet));
+            if( field.get(objet) != null ){
+                if (field.getName().equals("displayName"))
+                    line.append("\"").append(field.get(objet)).append("\"");
+                else
+                    line.append(field.get(objet));
+            }
             field.setAccessible(false);
             if (i != objet.getClass().getDeclaredFields().length - 1)
-                line.append(",");
+                line.append(SEPARATOR);
             i++;
         }
         FileWriter toWrite = new FileWriter(file, true);
