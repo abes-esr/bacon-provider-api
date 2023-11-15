@@ -11,6 +11,8 @@ import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
 import fr.abes.baconprovider.utils.UtilsMapper;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,8 +67,9 @@ public class BaconProviderController {
                 .body(resource);
     }
 
-    @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
-    public void postProviders(MultipartFile file) throws IOException, FileException, CsvException, IllegalDatabaseOperation {
+    @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void postProviders(@Parameter(description = "File to upload") @RequestPart(value = "file")
+                                  @Schema(type = "string", format = "binary")MultipartFile file) throws IOException, FileException, CsvException, IllegalDatabaseOperation {
         File tmpFile = new File("provider.csv");
 
         file.transferTo(Path.of(tmpFile.toURI()));
