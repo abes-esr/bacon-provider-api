@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @Service
 public class FileService {
-    private final String SEPARATOR = ";";
+
     public void writeHeaders(File file, Class clazz) throws IOException {
         StringBuilder line = new StringBuilder();
         int i = 0;
@@ -20,7 +20,7 @@ public class FileService {
             Column column = field.getAnnotation(Column.class);
             line.append(column.name());
             if (i != clazz.getDeclaredFields().length - 1)
-                line.append(SEPARATOR);
+                line.append(Constants.SEPARATOR);
             i++;
         }
         FileWriter toWrite = new FileWriter(file);
@@ -41,7 +41,7 @@ public class FileService {
             }
             field.setAccessible(false);
             if (i != objet.getClass().getDeclaredFields().length - 1)
-                line.append(SEPARATOR);
+                line.append(Constants.SEPARATOR);
             i++;
         }
         FileWriter toWrite = new FileWriter(file, true);
@@ -61,12 +61,12 @@ public class FileService {
             int nbColumnObject = clazz.getDeclaredFields().length;
             for (Field field : clazz.getDeclaredFields()) {
                 Column column = field.getAnnotation(Column.class);
-                if (Arrays.stream(headers.split(SEPARATOR)).noneMatch(header -> header.equals(column.name()))) {
+                if (Arrays.stream(headers.split(String.valueOf(Constants.SEPARATOR))).noneMatch(header -> header.equals(column.name()))) {
                     throw new FileException(String.format(Constants.FILE_EXCEPTION_MISSING_COLUMN, column.name()));
                 }
             }
 
-            if (!reader.lines().filter(line -> line.split(SEPARATOR).length != nbColumnObject).toList().isEmpty()) {
+            if (!reader.lines().filter(line -> line.split(String.valueOf(Constants.SEPARATOR)).length != nbColumnObject).toList().isEmpty()) {
                 throw new FileException(Constants.FILE_EXCEPTION_WRONG_NB_COLUMN + ((Table) clazz.getAnnotation(Table.class)).name());
             }
         } catch (IOException ex) {

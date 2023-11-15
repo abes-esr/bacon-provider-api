@@ -28,7 +28,8 @@ public class ProviderMapper {
                     }
                 }
                 Provider provider = new Provider();
-                provider.setIdtProvider(Integer.parseInt(ligneCsv[0]));
+                if (ligneCsv[0] != null)
+                    provider.setIdtProvider(Integer.parseInt(ligneCsv[0]));
                 provider.setProvider(ligneCsv[1]);
                 provider.setNomContact(ligneCsv[2]);
                 provider.setPrenomContact(ligneCsv[3]);

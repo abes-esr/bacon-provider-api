@@ -26,4 +26,17 @@ class ProviderMapperTest {
         Assertions.assertEquals("test5",provider.getDisplayName());
     }
 
+    @Test
+    void testMapperProvider2(){
+        String[] ligneCsv = {"","test1","test2","test3","test4","test5"};
+        Provider provider = mapper.map(ligneCsv, Provider.class);
+
+        Assertions.assertNull(provider.getIdtProvider());
+        Assertions.assertEquals("test1",provider.getProvider());
+        Assertions.assertEquals("test2",provider.getNomContact());
+        Assertions.assertEquals("test3",provider.getPrenomContact());
+        Assertions.assertEquals("test4",provider.getMailContact());
+        Assertions.assertEquals("test5",provider.getDisplayName());
+    }
+
 }

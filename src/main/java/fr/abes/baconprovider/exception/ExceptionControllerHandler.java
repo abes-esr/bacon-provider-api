@@ -39,6 +39,12 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
+    @ExceptionHandler(IllegalDatabaseOperation.class)
+    protected ResponseEntity<Object> handleIllegalDatabaseOperationException(IllegalDatabaseOperation ex) {
+        String error = "Erreur de sauvegarde dans la base de données";
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
+    }
+
     @ExceptionHandler({IOException.class, CsvException.class, IllegalAccessException.class})
     protected ResponseEntity<Object> handleOtherExceptions(Exception ex) {
         String error = "Erreur inconnu, merci de contacter les administrateurs";

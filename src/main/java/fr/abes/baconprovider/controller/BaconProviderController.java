@@ -1,9 +1,13 @@
 package fr.abes.baconprovider.controller;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
+import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.FileException;
+import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
 import fr.abes.baconprovider.utils.UtilsMapper;
@@ -60,23 +64,21 @@ public class BaconProviderController {
     }
 
     @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
-    public void postProviders(MultipartFile file) throws IOException, FileException, CsvException {
+    public void postProviders(MultipartFile file) throws IOException, FileException, CsvException, IllegalDatabaseOperation {
         File tmpFile = new File("provider.csv");
-        file.transferTo(tmpFile);
+
+        file.transferTo(Path.of(tmpFile.toURI()));
 
         //vérification du fichier
         fileService.checkCsvFile(tmpFile, Provider.class);
 
-        CSVReader reader = new CSVReader(new FileReader(tmpFile));
+        CSVReader reader = new CSVReaderBuilder(new FileReader(tmpFile)).withCSVParser(new CSVParserBuilder().withSeparator(Constants.SEPARATOR).build()).build();
+        //lecture à vide la ligne d'en tête
+        reader.readNext();
         List<Provider> listeProvider = mapper.mapList(reader.readAll(),Provider.class);
 
         providerService.saveListProvider(listeProvider);
         reader.close();
     }
 
-    private File createTmpFileFromMultipart(MultipartFile file) throws IOException {
-        File tmpFile = new File("providers.csv");
-
-        return tmpFile;
-    }
 }

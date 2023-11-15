@@ -50,6 +50,9 @@ public class Provider implements Serializable {
         return Objects.hash(idtProvider);
     }
 
-
+    @Override
+    public String toString() {
+        return this.idtProvider + " / " + this.provider;
+    }
 
 }
