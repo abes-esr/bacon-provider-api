@@ -5,6 +5,7 @@ import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.ExceptionControllerHandler;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
+import fr.abes.baconprovider.utils.UtilsMapper;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,17 +16,22 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = {BaconProviderController.class, FileService.class})
+@SpringBootTest(classes = {BaconProviderController.class, FileService.class, UtilsMapper.class})
 @ContextConfiguration(classes = RestConfiguration.class)
 class BaconProviderControllerTest {
     @Autowired
@@ -37,6 +43,9 @@ class BaconProviderControllerTest {
     @MockBean
     ProviderService service;
     MockMvc mockMvc;
+
+    @Autowired
+    UtilsMapper mapper;
 
     @BeforeEach
     void init() {
@@ -65,10 +74,10 @@ class BaconProviderControllerTest {
         provider2.setMailContact("mail2");
         provider2.setPrenomContact("prénom2");
 
-        String resultStr = "IDT_PROVIDER,PROVIDER,NOM_CONTACT,PRENOM_CONTACT,MAIL_CONTACT,DISPLAY_NAME" + System.lineSeparator() +
-                "1,provider1,nom1,prénom1,mail1,\"displayName1\"" +
+        String resultStr = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME" + System.lineSeparator() +
+                "1;provider1;nom1;prénom1;mail1;\"displayName1\"" +
                 System.lineSeparator() +
-                "2,provider2,nom2,prénom2,mail2,\"displayName2\"" +
+                "2;provider2;nom2;prénom2;mail2;\"displayName2\"" +
                 System.lineSeparator();
 
         Mockito.when(service.getProviders()).thenReturn(Lists.newArrayList(provider1, provider2));
@@ -78,5 +87,23 @@ class BaconProviderControllerTest {
                 .andExpect(result1 -> Assertions.assertTrue(result1.getResponse().getContentLength() > 0))
                 .andExpect(result -> Assertions.assertEquals(resultStr, result.getResponse().getContentAsString(StandardCharsets.UTF_8)));
 
+    }
+
+    @Test
+    void postProviders() throws Exception {
+        String fileContent = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME\n" +
+                "1;test;test;test;test;\"test\"";
+        MockMultipartFile file = new MockMultipartFile("test.csv", fileContent.getBytes());
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
+                .file("file", file.getBytes()))
+                .andExpect(status().isOk());
+
+        fileContent = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME\n" +
+                "1;test;test;test;test";
+        file = new MockMultipartFile("test.csv", fileContent.getBytes());
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
+                .file("file", file.getBytes()))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> result.getResponse().getContentAsString().contains("debugMessage: Une des lignes du fichier ne contient le même nombre de colonnes que la table PROVIDER"));
     }
 }

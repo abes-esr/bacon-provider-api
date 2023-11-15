@@ -1,18 +1,23 @@
 package fr.abes.baconprovider.controller;
 
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
+import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.exception.FileException;
+import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.service.FileService;
 import fr.abes.baconprovider.service.ProviderService;
+import fr.abes.baconprovider.utils.UtilsMapper;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,9 +33,12 @@ public class BaconProviderController {
 
     private final FileService fileService;
 
-    public BaconProviderController(ProviderService providerService, FileService fileService) {
+    private final UtilsMapper mapper;
+
+    public BaconProviderController(ProviderService providerService, FileService fileService, UtilsMapper mapper) {
         this.providerService = providerService;
         this.fileService = fileService;
+        this.mapper = mapper;
     }
 
     @GetMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
@@ -54,4 +62,23 @@ public class BaconProviderController {
                 .contentLength(resource.contentLength())
                 .body(resource);
     }
+
+    @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
+    public void postProviders(MultipartFile file) throws IOException, FileException, CsvException, IllegalDatabaseOperation {
+        File tmpFile = new File("provider.csv");
+
+        file.transferTo(Path.of(tmpFile.toURI()));
+
+        //vérification du fichier
+        fileService.checkCsvFile(tmpFile, Provider.class);
+
+        CSVReader reader = new CSVReaderBuilder(new FileReader(tmpFile)).withCSVParser(new CSVParserBuilder().withSeparator(Constants.SEPARATOR).build()).build();
+        //lecture à vide la ligne d'en tête
+        reader.readNext();
+        List<Provider> listeProvider = mapper.mapList(reader.readAll(),Provider.class);
+
+        providerService.saveListProvider(listeProvider);
+        reader.close();
+    }
+
 }
