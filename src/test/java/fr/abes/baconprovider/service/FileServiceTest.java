@@ -42,7 +42,7 @@ class FileServiceTest {
         service.writeHeaders(file, Provider.class);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Assertions.assertEquals("IDT_PROVIDER,PROVIDER,NOM_CONTACT,PRENOM_CONTACT,MAIL_CONTACT,DISPLAY_NAME", reader.readLine());
+        Assertions.assertEquals("IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME", reader.readLine());
 
         file.delete();
     }
@@ -59,7 +59,7 @@ class FileServiceTest {
         service.writeLine(file, provider);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName\"", reader.readLine());
+        Assertions.assertEquals("1;provider;nom;prenom;mail;\"displayName\"", reader.readLine());
     }
 
     @Test
@@ -77,8 +77,8 @@ class FileServiceTest {
         service.writeLine(file, provider);
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName\"", reader.readLine());
-        Assertions.assertEquals("1,provider,nom,prenom,mail,\"displayName2\"", reader.readLine());
+        Assertions.assertEquals("1;provider;nom;prenom;mail;\"displayName\"", reader.readLine());
+        Assertions.assertEquals("1;provider;nom;prenom;mail;\"displayName2\"", reader.readLine());
     }
 
     @Test

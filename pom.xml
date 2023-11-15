@@ -153,7 +153,24 @@
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.3.1</version>
                     <configuration>
+                        <resourceEncoding>${project.build.sourceEncoding}</resourceEncoding>
                         <failOnMissingWebXml>false</failOnMissingWebXml>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -169,6 +186,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M6</version>
+                    <configuration>
+                        <properties>
+                            <maven.plugin.validation>DEFAULT</maven.plugin.validation>
+                        </properties>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>

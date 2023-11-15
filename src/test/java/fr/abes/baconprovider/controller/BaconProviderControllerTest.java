@@ -74,10 +74,10 @@ class BaconProviderControllerTest {
         provider2.setMailContact("mail2");
         provider2.setPrenomContact("prénom2");
 
-        String resultStr = "IDT_PROVIDER,PROVIDER,NOM_CONTACT,PRENOM_CONTACT,MAIL_CONTACT,DISPLAY_NAME" + System.lineSeparator() +
-                "1,provider1,nom1,prénom1,mail1,\"displayName1\"" +
+        String resultStr = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME" + System.lineSeparator() +
+                "1;provider1;nom1;prénom1;mail1;\"displayName1\"" +
                 System.lineSeparator() +
-                "2,provider2,nom2,prénom2,mail2,\"displayName2\"" +
+                "2;provider2;nom2;prénom2;mail2;\"displayName2\"" +
                 System.lineSeparator();
 
         Mockito.when(service.getProviders()).thenReturn(Lists.newArrayList(provider1, provider2));

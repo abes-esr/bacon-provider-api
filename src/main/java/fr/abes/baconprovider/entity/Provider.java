@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PROVIDER")
@@ -35,6 +36,20 @@ public class Provider implements Serializable {
         //on ne connait pas le display name à l'avance, on l'initialise au provider pour éviter une erreur not null dans la table
         this.displayName = provider;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Provider provider = (Provider) o;
+        return Objects.equals(idtProvider, provider.idtProvider);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idtProvider);
+    }
+
 
 
 }
