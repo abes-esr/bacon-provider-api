@@ -6,6 +6,8 @@ import org.modelmapper.spi.MappingContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 public class ProviderMapper {
     private final UtilsMapper mapper;
@@ -20,6 +22,11 @@ public class ProviderMapper {
             @Override
             public Provider convert(MappingContext<String[], Provider> mappingContext) {
                 String[] ligneCsv = mappingContext.getSource();
+                for (int i = 0; i < ligneCsv.length-1; i++) {
+                    if(ligneCsv[i].equals("")){
+                        ligneCsv[i] = null;
+                    }
+                }
                 Provider provider = new Provider();
                 provider.setIdtProvider(Integer.parseInt(ligneCsv[0]));
                 provider.setProvider(ligneCsv[1]);
