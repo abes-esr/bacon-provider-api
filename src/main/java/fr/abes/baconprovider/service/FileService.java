@@ -4,6 +4,7 @@ import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.exception.FileException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -66,7 +67,7 @@ public class FileService {
                 }
             }
 
-            if (!reader.lines().filter(line -> line.split(String.valueOf(Constants.SEPARATOR)).length != nbColumnObject).toList().isEmpty()) {
+            if (!reader.lines().filter(line -> StringUtils.countMatches(line, Constants.SEPARATOR) != nbColumnObject-1).toList().isEmpty()) {
                 throw new FileException(Constants.FILE_EXCEPTION_WRONG_NB_COLUMN + ((Table) clazz.getAnnotation(Table.class)).name());
             }
         } catch (IOException ex) {

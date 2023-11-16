@@ -32,10 +32,10 @@ public class ProviderService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Throwable.class})
     public void saveListProvider(List<Provider> providers) throws IllegalDatabaseOperation, FileException {
 
-        for(int i = 0; i < providers.size() - 1; i++){
+        for(int i = 0; i < providers.size(); i++){
             Provider provider = providers.get(i);
             if( provider.getProvider() == null || provider.getDisplayName() == null){
-                throw new FileException(String.format(Constants.FILE_EXCEPTION_PROVIFER_OR_DISPLAYNAME_NOTNULL, i ));
+                throw new FileException(String.format(Constants.FILE_EXCEPTION_PROVIFER_OR_DISPLAYNAME_NOTNULL, i+1 ));
             }
         }
 
