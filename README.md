@@ -26,7 +26,7 @@ Ce programme permet la mise à jour de la table PROVIDER de la base Bacon. Pour 
 - La modification du fichier csv récupéré
 - L'envoi du fichier csv modifié pour mettre à jour la table avec les informations mises à jour
 
-La procédure pour réaliser ces 3 étapes est présentée dans la documentation utilisateur située [ici] (lien privé).
+La procédure pour réaliser ces 3 étapes est présentée dans la documentation utilisateur située [ici](https://bouda.abes.fr/ApplisMetiers/bacon/Traitements/BACON_procedure_MAJ-PROVIDER.docx).
 
 
 
