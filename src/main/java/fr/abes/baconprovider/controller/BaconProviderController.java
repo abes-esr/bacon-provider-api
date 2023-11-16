@@ -13,6 +13,7 @@ import fr.abes.baconprovider.service.ProviderService;
 import fr.abes.baconprovider.utils.UtilsMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -45,6 +46,10 @@ public class BaconProviderController {
         this.mapper = mapper;
     }
 
+    @Operation(
+            summary = "Permet de récuperer un fichier CSV contenant tout les Providers.",
+            description = "La methode récupere tout les providers se trouvant dans la table PROVIDER de Bacon, et construit un fichier CSV avec."
+    )
     @GetMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8")
     public ResponseEntity<Resource> getProviders() throws IOException, IllegalAccessException {
         File file = File.createTempFile("provider", ".csv");
@@ -67,6 +72,10 @@ public class BaconProviderController {
                 .body(resource);
     }
 
+    @Operation(
+            summary = "Permet d'envoyer des Providers afin de les sauvegarders.",
+            description = "La methode envoi un fichier CSV contenant des providers afin de les sauvegarders dans la table PROVIDER de la base Bacon."
+    )
     @PostMapping(value = "/providers", produces = "application/octet-stream;charset=UTF-8", consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     public void postProviders(@Parameter(description = "File to upload") @RequestPart(value = "file")
                                   @Schema(type = "string", format = "binary")MultipartFile file) throws IOException, FileException, CsvException, IllegalDatabaseOperation {
