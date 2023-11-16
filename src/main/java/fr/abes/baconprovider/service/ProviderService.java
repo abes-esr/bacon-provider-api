@@ -1,8 +1,10 @@
 package fr.abes.baconprovider.service;
 
 import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.exception.FileException;
 import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.repository.ProviderRepository;
+import fr.abes.baconprovider.configuration.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,15 @@ public class ProviderService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Throwable.class})
-    public void saveListProvider(List<Provider> providers) throws IllegalDatabaseOperation {
+    public void saveListProvider(List<Provider> providers) throws IllegalDatabaseOperation, FileException {
+
+        for(int i = 0; i < providers.size() - 1; i++){
+            Provider provider = providers.get(i);
+            if( provider.getProvider() == null || provider.getDisplayName() == null){
+                throw new FileException(String.format(Constants.FILE_EXCEPTION_PROVIFER_OR_DISPLAYNAME_NOTNULL, i ));
+            }
+        }
+
         Set<Provider> newProviders = new HashSet<>();
         List<Provider> deletedProviders = new ArrayList<>();
         //récupération des enregistrements existants pour faire un diff
