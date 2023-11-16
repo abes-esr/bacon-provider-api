@@ -7,6 +7,7 @@ public class Constants {
     public static final String FILE_EXCEPTION_MISSING_COLUMN = "La colonne %s n'est pas présente dans l'en-tête";
     public static final String FILE_EXCEPTION_WRONG_NB_COLUMN = "Une des lignes du fichier ne contient le même nombre de colonnes que la table ";
     public static final String FILE_EXCEPTION_ERROR_READ = "Impossible de lire le fichier";
+    public static final String FILE_EXCEPTION_PROVIFER_OR_DISPLAYNAME_NOTNULL = "Les champs PROVIDER ou DISPLAYNAME ne peuvent pas etre vide à la ligne (%s)";
 
     public static final char SEPARATOR = ';';
 }
