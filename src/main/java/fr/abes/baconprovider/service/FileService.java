@@ -60,9 +60,9 @@ public class FileService {
             }
             int nbColumnObject = clazz.getDeclaredFields().length;
             for (Field field : clazz.getDeclaredFields()) {
-                Column column = field.getAnnotation(Column.class);
-                if (Arrays.stream(headers.split(String.valueOf(Constants.SEPARATOR))).noneMatch(header -> header.equals(column.name()))) {
-                    throw new FileException(String.format(Constants.FILE_EXCEPTION_MISSING_COLUMN, column.name()));
+                String columnName = field.getAnnotation(Column.class).name();
+                if (Arrays.stream(headers.split(String.valueOf(Constants.SEPARATOR))).noneMatch(header -> header.equals(columnName))) {
+                    throw new FileException(String.format(Constants.FILE_EXCEPTION_MISSING_COLUMN, columnName));
                 }
             }
 
