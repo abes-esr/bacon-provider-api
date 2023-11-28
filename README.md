@@ -19,4 +19,14 @@ Vous pouvez utiliser la même procédure pour générer en local les autres imag
 
 Cette commande suppose que vous disposez d'un environnement Docker en local : cf la [FAQ dans la poldev](https://github.com/abes-esr/abes-politique-developpement/blob/main/10-FAQ.md#configuration-dun-environnement-docker-sous-windows-10).
 
+## Documentation utilisateur
+
+Ce programme permet la mise à jour de la table PROVIDER de la base Bacon. Pour cela, trois étapes sont nécessaires : 
+- La récupération du contenu de la table dans son état actuel dans un fichier csv
+- La modification du fichier csv récupéré
+- L'envoi du fichier csv modifié pour mettre à jour la table avec les informations mises à jour
+
+La procédure pour réaliser ces 3 étapes est présentée dans la documentation utilisateur située [ici](https://bouda.abes.fr/ApplisMetiers/bacon/Traitements/BACON_procedure_MAJ-PROVIDER.docx).
+
+
 
