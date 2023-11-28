@@ -26,7 +26,7 @@ public class ProviderService {
     }
 
     public List<Provider> getProviders() {
-        return dao.findAll();
+        return dao.findAllByOrderByProvider();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = {Throwable.class})
