@@ -70,8 +70,8 @@ public class ProviderService {
             }
             dao.flush();
         } catch (DataIntegrityViolationException ex) {
-            log.error("Erreur de suppression dans la base de données sur provider " + currentProvider);
-            throw new IllegalDatabaseOperation("Impossible de supprimer le provider " + currentProvider + " : " + ex.getMessage(), ex.getCause());
+            log.error("Erreur dans la requête sur la base de données pour le provider : " + currentProvider);
+            throw new IllegalDatabaseOperation("Erreur dans la requête sur la base de données pour le provider : " + currentProvider + " : " + ex.getMessage(), ex.getCause());
         }
     }
 
