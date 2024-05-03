@@ -71,7 +71,7 @@ public class ProviderService {
             dao.flush();
         } catch (DataIntegrityViolationException ex) {
             log.error("Erreur de suppression dans la base de données sur provider " + currentProvider);
-            throw new IllegalDatabaseOperation("Impossible de supprimer le provider " + currentProvider + " possédant encore des packages", ex.getCause());
+            throw new IllegalDatabaseOperation("Impossible de supprimer le provider " + currentProvider + " : " + ex.getMessage(), ex.getCause());
         }
     }
 
