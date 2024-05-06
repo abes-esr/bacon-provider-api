@@ -68,7 +68,7 @@ public class ProviderService {
             dao.flush();
         } catch (DataIntegrityViolationException ex) {
             log.error("Erreur dans le chargement du fichier, doublon détecté");
-            throw new IllegalDatabaseOperation("Erreur dans le chargement du fichier, doublon détecté");
+            throw new IllegalDatabaseOperation("Erreur dans le chargement du fichier, doublon détecté : " + ex.getMessage(), ex.getCause());
         }
     }
 
