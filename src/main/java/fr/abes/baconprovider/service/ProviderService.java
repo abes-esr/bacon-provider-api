@@ -1,10 +1,10 @@
 package fr.abes.baconprovider.service;
 
+import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.FileException;
 import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.repository.ProviderRepository;
-import fr.abes.baconprovider.configuration.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -58,20 +58,17 @@ public class ProviderService {
         }
         //ajout des enregistrements à update dans la liste des providers à créer
         newProviders.addAll(providers);
-        Provider currentProvider = new Provider();
         try {
             for (Provider provider : newProviders) {
-                currentProvider = provider;
                 dao.save(provider);
             }
             for (Provider provider : deletedProviders) {
-                currentProvider = provider;
                 dao.delete(provider);
             }
             dao.flush();
         } catch (DataIntegrityViolationException ex) {
-            log.error("Erreur dans la requête sur la base de données pour le provider : " + currentProvider);
-            throw new IllegalDatabaseOperation("Erreur dans la requête sur la base de données pour le provider : " + currentProvider + " : " + ex.getMessage(), ex.getCause());
+            log.error("Erreur dans le chargement du fichier, doublon détecté");
+            throw new IllegalDatabaseOperation("Erreur dans le chargement du fichier, doublon détecté : " + ex.getMessage(), ex.getCause());
         }
     }
 
