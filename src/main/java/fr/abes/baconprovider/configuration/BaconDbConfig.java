@@ -60,7 +60,7 @@ public class BaconDbConfig {
     public LocalContainerEntityManagerFactoryBean baconEntityManager() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(baconDataSource());
-        em.setPackagesToScan(new String[]{"fr.abes.baconprovider.entity"});
+        em.setPackagesToScan("fr.abes.baconprovider.entity");
         configHibernate(em, platform, showsql, dialect, ddlAuto, generateDdl, initMode);
         return em;
     }
