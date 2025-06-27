@@ -47,7 +47,8 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({IOException.class, CsvException.class, IllegalAccessException.class})
     protected ResponseEntity<Object> handleOtherExceptions(Exception ex) {
-        String error = "Erreur inconnu, merci de contacter les administrateurs";
+        String error = "Erreur inconnu, merci de contacter les administrateurs ";
+        ex.printStackTrace();
         return buildResponseEntity(new ApiReturnError(HttpStatus.I_AM_A_TEAPOT, error, ex));
     }
 }

@@ -25,18 +25,4 @@ public class UtilsMapper extends ModelMapper {
                 .map(element -> this.map(element, targetClass))
                 .collect(Collectors.toList());
     }
-
-    /**
-     * Fonction de mapping générique pour des sets
-     *
-     * @param source      Liste source
-     * @param targetClass Classe des objets cibles
-     * @return Liste des objets cibles
-     */
-    public <S, T> Set<T> mapSet(Set<S> source, Class<T> targetClass) {
-        return source
-                .stream()
-                .map(element -> this.map(element, targetClass))
-                .collect(Collectors.toSet());
-    }
 }

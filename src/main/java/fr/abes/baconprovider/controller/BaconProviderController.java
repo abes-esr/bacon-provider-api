@@ -6,9 +6,11 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.entity.Provider;
+import fr.abes.baconprovider.dto.ProviderPackageDeletedDTO;
 import fr.abes.baconprovider.exception.FileException;
 import fr.abes.baconprovider.exception.IllegalDatabaseOperation;
 import fr.abes.baconprovider.service.FileService;
+import fr.abes.baconprovider.service.ProviderPackageDeletedService;
 import fr.abes.baconprovider.service.ProviderService;
 import fr.abes.baconprovider.utils.UtilsMapper;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,11 +42,13 @@ public class BaconProviderController {
     private final FileService fileService;
 
     private final UtilsMapper mapper;
+    private final ProviderPackageDeletedService providerPackageDeletedService;
 
-    public BaconProviderController(ProviderService providerService, FileService fileService, UtilsMapper mapper) {
+    public BaconProviderController(ProviderService providerService, FileService fileService, UtilsMapper mapper, ProviderPackageDeletedService providerPackageDeletedService) {
         this.providerService = providerService;
         this.fileService = fileService;
         this.mapper = mapper;
+        this.providerPackageDeletedService = providerPackageDeletedService;
     }
 
     @Operation(
@@ -94,5 +99,17 @@ public class BaconProviderController {
         providerService.saveListProvider(listeProvider);
         reader.close();
     }
+
+    @GetMapping(value = "/provider-package-deleted")
+    public List<ProviderPackageDeletedDTO> getProviderPackageDeleted(@RequestParam Optional<String> provider) {
+        List<ProviderPackageDeletedDTO> listProviderPackageDeleted;
+        if(provider.isPresent()) {
+            listProviderPackageDeleted = providerPackageDeletedService.getProviderPackageDeletedDTOListByProvider(provider.get());
+        }else {
+            listProviderPackageDeleted = providerPackageDeletedService.getProviderPackageDeletedDTOList();
+        }
+        return listProviderPackageDeleted;
+    }
+
 
 }
