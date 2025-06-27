@@ -1,5 +1,6 @@
 # bacon-provider-api
 permet la mise des à jour des providers par l'équipe BACON (ajout du DISPLAY_NAME)
+[Swagger UI](http://diplotaxis2-dev.v212.abes.fr:15086/swagger-ui/index.html)
 
 ## Développement
 
