@@ -32,8 +32,18 @@ RUN mvn --batch-mode \
 #COPY --from=build-image /build/web/target/*.war /usr/local/tomcat/webapps/ROOT.war
 #CMD [ "catalina.sh", "run" ]
 FROM eclipse-temurin:21-jdk as bacon-provider-api-image
-WORKDIR /app/
-COPY --from=build-image /build/target/*.jar /app/bacon-provider-api.jar
+RUN apt-get update
+RUN apt-get install -y locales locales-all
+ENV LC_ALL fr_FR.UTF-8
+ENV LANG fr_FR.UTF-8
+ENV LANGUAGE fr_FR.UTF-8
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+WORKDIR /app/
+
+COPY --from=build-image application/dependencies/ ./
+COPY --from=build-image application/spring-boot-loader/ ./
+COPY --from=build-image application/snapshot-dependencies/ ./
+COPY --from=build-image application/*.jar ./bacon-provider-api.jar
+
 ENTRYPOINT ["java","-jar","/app/bacon-provider-api.jar"]
