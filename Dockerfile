@@ -25,6 +25,10 @@ RUN mvn --batch-mode \
         -Duser.language=fr \
         package spring-boot:repackage
 
+FROM maven:3-eclipse-temurin-21 as baconprovider-builder
+WORKDIR application
+COPY --from=build-image /build/target/bacon-provider-api.jar bacon-provider-api.jar
+RUN java -Djarmode=layertools -jar bacon-provider-api.jar extract
 
 ###
 # Image pour le module API
@@ -41,9 +45,9 @@ ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /app/
 
-COPY --from=build-image application/dependencies/ ./
-COPY --from=build-image application/spring-boot-loader/ ./
-COPY --from=build-image application/snapshot-dependencies/ ./
-COPY --from=build-image application/*.jar ./bacon-provider-api.jar
+COPY --from=baconprovider-builder application/dependencies/ ./
+COPY --from=baconprovider-builder application/spring-boot-loader/ ./
+COPY --from=baconprovider-builder application/snapshot-dependencies/ ./
+COPY --from=baconprovider-builder application/*.jar ./bacon-provider-api.jar
 
 ENTRYPOINT ["java","-jar","/app/bacon-provider-api.jar"]
