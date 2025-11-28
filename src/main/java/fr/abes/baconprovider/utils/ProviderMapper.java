@@ -1,12 +1,10 @@
 package fr.abes.baconprovider.utils;
 
 import fr.abes.baconprovider.entity.Provider;
+import jakarta.annotation.PostConstruct;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 @Component
 public class ProviderMapper {
@@ -16,14 +14,13 @@ public class ProviderMapper {
         this.mapper = mapper;
     }
 
-    @Bean
+    @PostConstruct
     public void converterTableauStringToProvider(){
         Converter<String[], Provider> myConverter = new Converter<String[], Provider>() {
-            @Override
             public Provider convert(MappingContext<String[], Provider> mappingContext) {
                 String[] ligneCsv = mappingContext.getSource();
                 for (int i = 0; i < ligneCsv.length-1; i++) {
-                    if(ligneCsv[i].equals("")){
+                    if(ligneCsv[i].isEmpty()){
                         ligneCsv[i] = null;
                     }
                 }
