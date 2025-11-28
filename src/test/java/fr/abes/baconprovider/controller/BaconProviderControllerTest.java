@@ -101,7 +101,7 @@ class BaconProviderControllerTest {
         fileContent = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME\n" +
                 "1;test;test;test;test";
         file = new MockMultipartFile("test.csv", fileContent.getBytes());
-        ResultActions res = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
                 .file("file", file.getBytes()))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> Assertions.assertTrue(result.getResponse().getContentAsString().contains("Une des lignes du fichier ne contient pas le même nombre de colonnes que la table PROVIDER")));
