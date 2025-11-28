@@ -1,5 +1,6 @@
 package fr.abes.baconprovider.controller;
 
+import fr.abes.baconprovider.configuration.Constants;
 import fr.abes.baconprovider.configuration.RestConfiguration;
 import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.ExceptionControllerHandler;
@@ -104,6 +105,6 @@ class BaconProviderControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
                 .file("file", file.getBytes()))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> Assertions.assertTrue(result.getResponse().getContentAsString().contains("Une des lignes du fichier ne contient pas le même nombre de colonnes que la table PROVIDER")));
+                .andExpect(result -> Assertions.assertTrue(result.getResponse().getContentAsString().contains(Constants.FILE_EXCEPTION_WRONG_NB_COLUMN + "PROVIDER")));
     }
 }
