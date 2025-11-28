@@ -4,6 +4,7 @@ import fr.abes.baconprovider.configuration.RestConfiguration;
 import fr.abes.baconprovider.entity.Provider;
 import fr.abes.baconprovider.exception.ExceptionControllerHandler;
 import fr.abes.baconprovider.service.FileService;
+import fr.abes.baconprovider.service.ProviderPackageDeletedService;
 import fr.abes.baconprovider.service.ProviderService;
 import fr.abes.baconprovider.utils.UtilsMapper;
 import org.assertj.core.util.Lists;
@@ -15,17 +16,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,11 +36,12 @@ class BaconProviderControllerTest {
     @Autowired
     WebApplicationContext context;
 
-    @InjectMocks
-    BaconProviderController controller;
-
-    @MockBean
+    @MockitoBean
     ProviderService service;
+
+    @MockitoBean
+    ProviderPackageDeletedService providerPackageDeletedService;
+
     MockMvc mockMvc;
 
     @Autowired
@@ -101,9 +101,9 @@ class BaconProviderControllerTest {
         fileContent = "IDT_PROVIDER;PROVIDER;NOM_CONTACT;PRENOM_CONTACT;MAIL_CONTACT;DISPLAY_NAME\n" +
                 "1;test;test;test;test";
         file = new MockMultipartFile("test.csv", fileContent.getBytes());
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
+        ResultActions res = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/providers")
                 .file("file", file.getBytes()))
                 .andExpect(status().isBadRequest())
-                .andExpect(result -> result.getResponse().getContentAsString().contains("debugMessage: Une des lignes du fichier ne contient le même nombre de colonnes que la table PROVIDER"));
+                .andExpect(result -> Assertions.assertTrue(result.getResponse().getContentAsString().contains("Une des lignes du fichier ne contient pas le même nombre de colonnes que la table PROVIDER")));
     }
 }
