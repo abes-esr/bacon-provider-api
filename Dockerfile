@@ -17,7 +17,7 @@ RUN mvn --batch-mode \
         -Duser.language=fr \
         package -Passembly
 
-FROM ossyupiik/java:21.0.8 AS sudoc-image
+FROM ossyupiik/java:21.0.8 AS baconprovider-image
 WORKDIR /
 COPY --from=build-image /build/target/bacon-provider-api-distribution.tar.gz /
 RUN tar xvfz bacon-provider-api-distribution.tar.gz
