@@ -2,14 +2,6 @@
 # Image pour la compilation
 FROM maven:3-eclipse-temurin-21 AS build-image
 WORKDIR /build/
-# Installation et configuration de la locale FR
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt -y install locales
-RUN sed -i '/fr_FR.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-ENV LANG=fr_FR.UTF-8
-ENV LANGUAGE=fr_FR:fr
-ENV LC_ALL=fr_FR.UTF-8
-
 
 # On lance la compilation Java
 # On débute par une mise en cache docker des dépendances Java
@@ -20,25 +12,18 @@ RUN mvn verify --fail-never
 COPY ./   /build/
 
 RUN mvn --batch-mode \
-        -Dmaven.test.skip=false \
+        -Dmaven.test.skip=true \
         -Duser.timezone=Europe/Paris \
         -Duser.language=fr \
-        package spring-boot:repackage
+        package -Passembly
 
-FROM maven:3-eclipse-temurin-21 AS baconprovider-builder
-WORKDIR /application
-COPY --from=build-image /build/target/bacon-provider-api.jar bacon-provider-api.jar
-RUN java -Djarmode=layertools -jar bacon-provider-api.jar extract
-
-
-FROM ossyupiik/java:21.0.8 AS bacon-provider-api-image
-WORKDIR /app/
-COPY --from=baconprovider-builder /application/dependencies/ ./
-COPY --from=baconprovider-builder /application/spring-boot-loader/ ./
-COPY --from=baconprovider-builder /application/snapshot-dependencies/ ./
-COPY --from=baconprovider-builder /application/*.jar ./bacon-provider-api.jar
+FROM ossyupiik/java:21.0.8 AS sudoc-image
+WORKDIR /
+COPY --from=build-image /build/target/bacon-provider-api-distribution.tar.gz /
+RUN tar xvfz bacon-provider-api-distribution.tar.gz
+RUN rm -f /bacon-provider-api-distribution.tar.gz
 
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-CMD ["java","-jar","/bacon-provider-api.jar"]
+CMD ["java","-cp", "/bacon/lib/*","fr.abes.baconprovider.BaconProviderApplication"]
