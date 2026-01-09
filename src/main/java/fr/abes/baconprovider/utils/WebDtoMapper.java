@@ -1,11 +1,11 @@
 package fr.abes.baconprovider.utils;
 
 
-import fr.abes.baconprovider.entity.ProviderPackageDeleted;
 import fr.abes.baconprovider.dto.ProviderPackageDeletedDTO;
+import fr.abes.baconprovider.entity.ProviderPackageDeleted;
+import jakarta.annotation.PostConstruct;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +17,7 @@ public class WebDtoMapper {
         this.mapper = mapper;
     }
 
-    @Bean
+    @PostConstruct
     public void converterProviderPackageDeletedToProviderPackageDeletedDTO() {
         Converter<ProviderPackageDeleted, ProviderPackageDeletedDTO> myConverter = new Converter<ProviderPackageDeleted, ProviderPackageDeletedDTO>() {
             public ProviderPackageDeletedDTO convert(MappingContext<ProviderPackageDeleted, ProviderPackageDeletedDTO> context) {
