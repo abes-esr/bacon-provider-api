@@ -26,4 +26,4 @@ RUN rm -f /bacon-provider-api-distribution.tar.gz
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-CMD ["java","-cp", "/bacon/lib/*","fr.abes.baconprovider.BaconProviderApplication"]
+CMD ["java","-cp", "/bacon-provider-api/lib/*","fr.abes.baconprovider.BaconProviderApplication"]
