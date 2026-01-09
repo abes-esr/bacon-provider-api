@@ -6,11 +6,6 @@
     <groupId>fr.abes</groupId>
     <artifactId>bacon-provider-api</artifactId>
     <version>1.0.2-SNAPSHOT</version>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
-    </parent>
 
     <packaging>jar</packaging>
     <name>bacon-provider-api</name>
@@ -23,6 +18,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <webBaseDir>./target</webBaseDir>
+        <spring-boot.version>3.5.6</spring-boot.version>
     </properties>
 
     <!-- =========================================================== -->
@@ -106,6 +102,36 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>artifactory-public</id>
+            <name>artifactory-public</name>
+            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
+        </repository>
+        <repository>
+            <id>artifactory-public-libs</id>
+            <name>artifactory-public-libs</name>
+            <url>https://artifactory.abes.fr/artifactory/libs-release-local/</url>
+        </repository>
+    </repositories>
+
+    <!-- =========================================================== -->
+    <!--     Gestion des dependances                                 -->
+    <!-- =========================================================== -->
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -205,6 +231,14 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <parameters>true</parameters> <!-- conserve les noms -->
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.0.0-M6</version>
                 <configuration>
@@ -232,13 +266,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>fr.abes.baconprovider.BaconProviderApplication</mainClass>
-                </configuration>
+                <version>${spring-boot.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal>
+                            <goal>build-info</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -265,4 +297,8 @@
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:https://github.com/abes-esr/bacon-provider-api.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 </project>
